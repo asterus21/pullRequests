@@ -9,6 +9,8 @@ PA   = data.Defaults.PA
 GRID = data.Defaults.GRID
 AB   = data.Defaults.AB
 
+PATHS = ['D:/gitbash/help/', 'D:/gitbash/help.7/', 'D:/gitbash/help.ab/']
+
 
 class Timestamp:
     
@@ -58,6 +60,15 @@ class Script(Timestamp):
         self.print_output(output, repo)
 
 
+    def assert_path(self, local, path):
+        remote = self.return_repo_url(path)      
+        assert remote == local, f"You're trying to pull from\n {self.return_repo_url(path)}\n to\n {local}!"
+        try:     
+            self.pull_repo(path)
+        except Exception as e:
+            self.print()
+
+
     def start_script(self, args):
         for arg in args:
             self.pull_repo(arg)
@@ -73,27 +84,7 @@ if __name__ == '__main__':
 
     script = Script(args.pa, args.grid, args.ab)
 
-    if args.pa:
-        path = script.return_repo_url(args.pa)
-        assert path == PA, f"You're trying to pull from\n {script.return_repo_url(args.pa)}\n to\n {PA}!"
-        try:
-            script.pull_repo(args.pa)
-        except Exception as e:
-            script.print()
-    elif args.grid:
-        path = script.return_repo_url(args.grid)
-        assert script.return_repo_url(args.grid) == GRID, "You're trying to pull a wrong repository!"        
-        try:
-            script.pull_repo(args.grid)
-        except Exception as e:
-            script.print()
-    elif args.ab:
-        path = script.return_repo_url(args.ab)
-        assert script.return_repo_url(args.ab) == AB, "You're trying to pull a wrong repository!"        
-        try:
-            script.pull_repo(args.ab)
-        except Exception as e:
-            script.print()
-    else:
-        paths = ['D:/gitbash/help/', 'D:/gitbash/help.7/', 'D:/gitbash/help.ab/']
-        script.start_script(paths)
+    if args.pa:     script.assert_path(PA, args.pa)
+    elif args.grid: script.assert_path(GRID, args.grid)
+    elif args.ab:   script.assert_path(AB, args.ab)
+    else:           script.start_script(PATHS)
